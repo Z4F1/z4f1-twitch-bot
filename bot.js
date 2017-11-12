@@ -4,7 +4,8 @@ var tmi = require("tmi.js");
 
 var phrases = [
     "Follow me to get notified the next time I'm live!",
-    "Like my stream and what I do? Then check out my youtube channel: https://www.youtube.com/channel/UCxI9wLt-MpuJkL0Ep6kIAKA"
+    "Like my stream and what I do? Then check out my youtube channel: https://www.youtube.com/channel/UCxI9wLt-MpuJkL0Ep6kIAKA",
+    "There is alot of information down in the description. Go check it out!"
 ]
 
 var options = {
@@ -68,9 +69,13 @@ function Command(user, txt){
             con.query("SELECT * FROM viewers WHERE username='" + user.username + "'", function(err, result, fields){
                 if(err) throw err;
                 
-                console.log(result);
-                
-                Say("@" + user["display-name"] + " you have " + result[0]["points"] + " f*cking points man!");
+                if(result.length == 0){
+                    con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, result, fields){
+                        Say("@" + user["display-name"] + " you have 200 f*cking points man!");
+                    });
+                }else {
+                    Say("@" + user["display-name"] + " you have " + result[0]["points"] + " f*cking points man!");
+                }
             });
             
             break;
