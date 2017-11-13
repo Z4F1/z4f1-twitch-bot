@@ -5,7 +5,8 @@ var tmi = require("tmi.js");
 var phrases = [
     "Follow me to get notified the next time I'm live!",
     "Like my stream and what I do? Then check out my youtube channel: https://www.youtube.com/channel/UCxI9wLt-MpuJkL0Ep6kIAKA",
-    "There is alot of information down in the description. Go check it out!"
+    "There is alot of information down in the description. Go check it out!",
+    "Want to contact me? Join my discord! https://discord.gg/tjtW53 Pm me if I'm not online."
 ]
 
 var options = {
@@ -79,9 +80,52 @@ function Command(user, txt){
             });
             
             break;
+        case "russian_roulette":
+            
+            con.query("SELECT * FROM viewers WHERE username='" + user.username + "'", function(err, result, fields){
+                if(err) throw err;
+                
+                if(result.length == 0){
+                    con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, result, fields){
+                        
+                        if(command[1] <= 200){
+                            
+                        }else {
+                            Say("");
+                        }
+                        
+                    });
+                }else {
+                    
+                }
+            });
+            
+            break;
         default:
             Say("Sry, didn't recognize that command! Try reading the description to see which commands you can use.");
             break;
+    }
+}
+
+function RussianRoulette(user, amount){
+    if(amount > 0){
+        var bullet = Math.floor(Math.random() * 6) + 1;
+        var ticket = Math.floor(Math.random() * 6) + 1;
+        Say("[" + user["display-name"] + "]Spinning... and......");
+                    
+        if(bullet != ticket){
+            Say("[" + user["display-name"] + "]Pang!");
+        }else {
+            Say("[" + user["display-name"] + "]Click!");
+        }
+                
+        /*
+        Compare ticket with bullet.
+        Response
+        Harder?
+        Amount of bullets?
+                
+        */
     }
 }
 
