@@ -95,16 +95,20 @@ function Command(user, txt){
                         
                         if(command[1] <= 200){
                             RussianRoulette(user, command[1], 200);
-                        }else {
+                        }else if(command[1] > 200) {
                             Say("Sry you only have 200 points!");
+                        }else {
+                            Say("You need to write a valid amount!");
                         }
                         
                     });
                 }else {
                     if(command[1] <= parseInt(result[0]["points"])){
                         RussianRoulette(user, command[1], parseInt(result[0]["points"]));
-                    }else {
+                    }else if(command[1] > parseInt(result[0]["points"])) {
                         Say("Sry you only have " + result[0]["points"] + " points!");
+                    }else {
+                        Say("You need to write an amount!");
                     }
                 }
             });
