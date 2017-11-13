@@ -119,7 +119,7 @@ function Command(user, txt){
 
 function RussianRoulette(user, betAmount, amount){
     if(amount > 0){
-        var bullet = Math.floor(Math.random() * 6) + 1;
+        var bullet = 3;
         var ticket = Math.floor(Math.random() * 6) + 1;
         Say("[" + user["display-name"] + "] Spinning... and......");
         
