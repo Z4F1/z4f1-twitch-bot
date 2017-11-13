@@ -73,10 +73,42 @@ function Command(user, txt){
                 
                 if(result.length == 0){
                     con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, result, fields){
-                        Say("@" + user["display-name"] + " you have 200 f*cking points man!");
+                        Say("@" + user["display-name"] + " you have 200 f*cking points, mate!");
                     });
                 }else {
-                    Say("@" + user["display-name"] + " you have " + result[0]["points"] + " f*cking points man!");
+                    Say("@" + user["display-name"] + " you have " + result[0]["points"] + " f*cking points, mate!");
+                }
+            });
+            
+            break;
+            
+        case "coin_flip":
+        case "cf":
+            con.query("SELECT * FROM viewers WHERE username='" + user.username + "'", function(err, result, fields){
+                if(err) throw err;
+                
+                console.log(result);
+                
+                if(result.length == 0){
+                    con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, r, fields){
+                        
+                        if(command[1] <= 200){
+                            CoinFlip(user, command[1], 200);
+                        }else if(command[1] > 200) {
+                            Say("Sry you only have 200 points!");
+                        }else {
+                            Say("You need to write a fucking valid amount, man!");
+                        }
+                        
+                    });
+                }else {
+                    if(command[1] <= parseInt(result[0]["points"])){
+                        CoinFlip(user, command[1], parseInt(result[0]["points"]));
+                    }else if(command[1] > parseInt(result[0]["points"])) {
+                        Say("Sry you only have " + result[0]["points"] + " points!");
+                    }else {
+                        Say("You need to write a fucking valid amount, man!");
+                    }
                 }
             });
             
@@ -98,7 +130,7 @@ function Command(user, txt){
                         }else if(command[1] > 200) {
                             Say("Sry you only have 200 points!");
                         }else {
-                            Say("You need to write a valid amount!");
+                            Say("You need to write a fucking valid amount, man!");
                         }
                         
                     });
@@ -108,7 +140,7 @@ function Command(user, txt){
                     }else if(command[1] > parseInt(result[0]["points"])) {
                         Say("Sry you only have " + result[0]["points"] + " points!");
                     }else {
-                        Say("You need to write an amount!");
+                        Say("You need to write a fucking valid amount, man!");
                     }
                 }
             });
@@ -125,21 +157,43 @@ function RussianRoulette(user, betAmount, amount){
     if(amount > 0){
         var bullet = 3;
         var ticket = Math.floor(Math.random() * 6) + 1;
-        Say("[" + user["display-name"] + "] Spinning... and......");
+        Say("Spinning... and......");
         
         var newAmount = 0;
         if(bullet == ticket){
-            Say("[" + user["display-name"] + "] Pang!");
+            Say("Pang!");
             newAmount = amount-betAmount;
             
         }else {
-            Say("[" + user["display-name"] + "] Click!");
+            Say("Click!");
             newAmount = Math.floor(betAmount/4) + amount;
         }
         
         con.query("UPDATE viewers SET points='" + newAmount + "' WHERE username='" + user.username + "'", function(err, r, fields){
             
-            Say ("[" + user["display-name"] + "] You now have " + newAmount + "!");
+            Say ("You now have " + newAmount + "!");
+            
+        });
+    }
+}
+
+function CoinFlip(user, betAmount, amount){
+    if(amount > 0){
+        var ticket = Math.round(Math.random());
+        Say("Flipping... and.....");
+        
+        var newAmount = 0;
+        if(ticket == 1){
+            Say("Won!");
+            newAmount = parseInt(amount)+parseInt(betAmount);
+        }else if(ticket == 0){
+            Say("Lost!");
+            newAmount = amount-betAmount;
+        }
+        
+        con.query("UPDATE viewers SET points='" + newAmount + "' WHERE username='" + user.username + "'", function(err, r, fields){
+            
+            Say ("You now have " + newAmount + "!");
             
         });
     }
