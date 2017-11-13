@@ -65,6 +65,7 @@ function Command(user, txt){
             });
             
             break;
+            
         case "points":
             
             con.query("SELECT * FROM viewers WHERE username='" + user.username + "'", function(err, result, fields){
@@ -80,52 +81,63 @@ function Command(user, txt){
             });
             
             break;
+            
         case "russian_roulette":
+        case "rr":
             
             con.query("SELECT * FROM viewers WHERE username='" + user.username + "'", function(err, result, fields){
                 if(err) throw err;
                 
+                console.log(result);
+                
                 if(result.length == 0){
-                    con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, result, fields){
+                    con.query("INSERT INTO viewers (username, points) VALUES ('" + user.username + "', '" + 200 + "')", function(err, r, fields){
                         
                         if(command[1] <= 200){
-                            
+                            RussianRoulette(user, command[1], 200);
                         }else {
-                            Say("");
+                            Say("Sry you only have 200 points!");
                         }
                         
                     });
                 }else {
-                    
+                    if(command[1] <= parseInt(result[0]["points"])){
+                        RussianRoulette(user, command[1], parseInt(result[0]["points"]));
+                    }else {
+                        Say("Sry you only have " + result[0]["points"] + " points!");
+                    }
                 }
             });
             
             break;
+            
         default:
             Say("Sry, didn't recognize that command! Try reading the description to see which commands you can use.");
             break;
     }
 }
 
-function RussianRoulette(user, amount){
+function RussianRoulette(user, betAmount, amount){
     if(amount > 0){
         var bullet = Math.floor(Math.random() * 6) + 1;
         var ticket = Math.floor(Math.random() * 6) + 1;
-        Say("[" + user["display-name"] + "]Spinning... and......");
-                    
-        if(bullet != ticket){
-            Say("[" + user["display-name"] + "]Pang!");
+        Say("[" + user["display-name"] + "] Spinning... and......");
+        
+        var newAmount = 0;
+        if(bullet == ticket){
+            Say("[" + user["display-name"] + "] Pang!");
+            newAmount = amount-betAmount;
+            
         }else {
-            Say("[" + user["display-name"] + "]Click!");
+            Say("[" + user["display-name"] + "] Click!");
+            newAmount = Math.floor(betAmount/4) + amount;
         }
-                
-        /*
-        Compare ticket with bullet.
-        Response
-        Harder?
-        Amount of bullets?
-                
-        */
+        
+        con.query("UPDATE viewers SET points='" + newAmount + "' WHERE username='" + user.username + "'", function(err, r, fields){
+            
+            Say ("[" + user["display-name"] + "] You now have " + newAmount + "!");
+            
+        });
     }
 }
 
